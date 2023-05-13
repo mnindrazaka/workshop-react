@@ -33,11 +33,52 @@ function AboutPage() {
 }
 
 function HomePage() {
+  const [inputValue, setInputValue] = React.useState("");
+
+  const [products, setProducts] = React.useState([]);
+
+  // 1. membuat useEffect
+  React.useEffect(
+    function () {
+      // 2. mengganti event.target.value menjadi inputValue
+      fetch("https://dummyjson.com/products/search?q=" + inputValue)
+        .then(function (res) {
+          return res.json();
+        })
+        .then(function (data) {
+          setProducts(data.products);
+        });
+    },
+    [inputValue]
+  );
+
   return (
     <div>
       <Navbar />
       <p>Welcome to Home Page</p>
-      <input placeholder="Enter product name" />
+      <input
+        value={inputValue}
+        placeholder="Enter product name"
+        onChange={function (event) {
+          setInputValue(event.target.value);
+
+          // 3. hapus
+        }}
+      />
+
+      <button
+        onClick={function () {
+          setInputValue("");
+        }}
+      >
+        Clear
+      </button>
+      <p>{inputValue}</p>
+      <ol>
+        {products.map(function (productItem) {
+          return <li>{productItem.title}</li>;
+        })}
+      </ol>
     </div>
   );
 }
